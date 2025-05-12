@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ماتريكس | تجربة المشروبات الغازية الأردنية</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap">
+  <style>
+    :root {
+      --cola-primary: #0062be;
+      --cola-secondary: #004a8f;
+      --fruity-primary: #e4007c;
+      --fruity-secondary: #9e005d;
+      --miranda-primary: #ff6600;
+      --miranda-secondary: #cc3300;
+      --current-primary: var(--miranda-primary);
+      --current-secondary: var(--miranda-secondary);
+      --transition-time: 0.8s;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background-color: #000;
+      color: #fff;
+      overflow: hidden;
+      height: 100vh;
+      direction: rtl;
+    }
+
+    /* Main Container */
+    .matrix-experience {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Background Effects */
+    .matrix-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .matrix-grid {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(var(--rgb-primary), 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(var(--rgb-primary), 0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
+      perspective: 500px;
+      transform-style: preserve-3d;
+      animation: grid-animation 20s linear infinite;
+    }
+
+    @keyframes grid-animation {
+      0% {
+        opacity: 0;
+        transform: perspective(500px) rotateX(80deg) translateZ(-100px);
+      }
+      20% {
+        opacity: 0.5;
+      }
+      80% {
+        opacity: 0.5;
+      }
+      100% {
+        opacity: 0;
+        transform: perspective(500px) rotateX(80deg) translateZ(500px);
+      }
+    }
+
+    .liquid-bg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0.4;
+      background: radial-gradient(circle at center, rgba(var(--rgb-primary), 0.2) 0%, transparent 70%);
+      filter: blur(60px);
+      animation: pulse-bg 8s ease-in-out infinite;
+    }
+
+    @keyframes pulse-bg {
+      0%, 100% { transform: scale(1); opacity: 0.4; }
+      50% { transform: scale(1.2); opacity: 0.6; }
+    }
+
+    /* Bubbles */
+    .bubbles-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      bottom: -100px;
+      background: radial-gradient(
+        circle at 30% 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(var(--rgb-primary), 0.4) 60%,
+        rgba(var(--rgb-primary), 0.1)
+      );
+      box-shadow: 0 0 10px rgba(var(--rgb-primary), 0.3);
+      animation: rise var(--duration) ease-in infinite;
+      opacity: 0;
+    }
+
+    @keyframes rise {
+      0% {
+        opacity: 0;
+        transform: translateY(0) translateX(0) scale(0.2);
+      }
+      10% {
+        opacity: var(--opacity);
+      }
+      90% {
+        opacity: var(--opacity);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(calc(-100vh - 100px)) translateX(var(--translate-x)) scale(var(--scale));
+      }
+    }
+
+    /* Product Display */
+    .product-showcase {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      perspective: 1200px;
+    }
+
+    .product-container {
+      position: relative;
+      width: 300px;
+      height: 600px;
+      transform-style: preserve-3d;
+    }
+
+    .product-rotation {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform var(--transition-time) cubic-bezier(0.4, 0, 0.2, 1);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotateY(0); }
+      25% { transform: translateY(-15px) rotateY(5deg); }
+      75% { transform: translateY(-10px) rotateY(-5deg); }
+    }
+
+    .product {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity var(--transition-time) ease;
+    }
+
+    .product.active {
+      opacity: 1;
+    }
+
+    .product-image-container {
+      position: relative;
+      height: 90%;
+      transform-style: preserve-3d;
+      animation: rotate-product 15s linear infinite;
+    }
+
+    @keyframes rotate-product {
+      0% { transform: rotateY(0); }
+      100% { transform: rotateY(360deg); }
+    }
+
+    .product img {
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 30px rgba(var(--rgb-primary), 0.5));
+      transition: filter var(--transition-time) ease;
+    }
+
+    /* 3D Platform */
+    .platform {
+      position: absolute;
+      width: 400px;
+      height: 100px;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%) rotateX(60deg);
+      background: radial-gradient(ellipse at center, rgba(var(--rgb-primary), 0.2) 0%, transparent 70%);
+      border-radius: 50%;
+      filter: blur(5px);
+      animation: platform-pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes platform-pulse {
+      0%, 100% { opacity: 0.6; transform: translateX(-50%) rotateX(60deg) scale(1); }
+      50% { opacity: 0.8; transform: translateX(-50%) rotateX(60deg) scale(1.1); }
+    }
+
+    /* Light Effects */
+    .light-effects {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .spotlight {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(
+        circle at var(--x) var(--y),
+        rgba(var(--rgb-primary), 0.15) 0%,
+        transparent 50%
+      );
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    .spotlight.active {
+      opacity: 1;
+    }
+
+    .light-beam {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent, rgba(var(--rgb-primary), 0.3), transparent);
+      transform-origin: top;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    .light-beam.active {
+      opacity: 0.7;
+      animation: rotate-beam 20s linear infinite;
+    }
+
+    @keyframes rotate-beam {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Brand Elements */
+    .brand-elements {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .matrix-logo {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      font-size: 3rem;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 0 20px rgba(var(--rgb-primary), 0.7);
+      opacity: 0;
+      transform: translateY(-20px);
+      animation: fade-in 1s ease forwards 0.5s;
+    }
+
+    .matrix-logo span {
+      color: var(--current-primary);
+      transition: color var(--transition-time) ease;
+    }
+
+    .product-title {
+      position: absolute;
+      top: 20%;
+      right: 10%;
+      text-align: right;
+      opacity: 0;
+      transform: translateX(50px);
+      animation: slide-in 1s ease forwards 1s;
+    }
+
+    .product-name {
+      font-size: 5rem;
+      font-weight: 900;
+      color: var(--current-primary);
+      text-shadow: 0 0 30px rgba(var(--rgb-primary), 0.7);
+      margin-bottom: 10px;
+      transition: color var(--transition-time) ease, text-shadow var(--transition-time) ease;
+    }
+
+    .product-tagline {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .product-description {
+      position: absolute;
+      bottom: 25%;
+      left: 10%;
+      max-width: 400px;
+      text-align: left;
+      opacity: 0;
+      transform: translateX(-50px);
+      animation: slide-in 1s ease forwards 1.5s;
+    }
+
+    .description-text {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    }
+
+    .product-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background-color: rgba(var(--rgb-primary), 0.1);
+      padding: 8px 15px;
+      border-radius: 50px;
+      transition: background-color var(--transition-time) ease, transform 0.3s ease;
+    }
+
+    .feature-item:hover {
+      transform: translateY(-5px);
+      background-color: rgba(var(--rgb-primary), 0.2);
+    }
+
+    .feature-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.8rem;
+      background-color: var(--current-primary);
+      color: #fff;
+      transition: background-color var(--transition-time) ease;
+    }
+
+    .cta-button {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(135deg, var(--current-primary), var(--current-secondary));
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background var(--transition-time) ease;
+      box-shadow: 0 5px 20px rgba(var(--rgb-primary), 0.4);
+      position: relative;
+      overflow: hidden;
+      pointer-events: auto;
+    }
+
+    .cta-button::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(transparent, rgba(255, 255, 255, 0.2), transparent);
+      transform: rotate(30deg) translateX(-100%);
+      transition: transform 0.5s ease;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(var(--rgb-primary), 0.6);
+    }
+
+    .cta-button:hover::after {
+      transform: rotate(30deg) translateX(100%);
+    }
+
+    /* Product Selector */
+    .product-selector {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      opacity: 0;
+      animation: fade-in 1s ease forwards 2s;
+      z-index: 20;
+    }
+
+    .selector-item {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+      pointer-events: auto;
+    }
+
+    .selector-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .selector-item:hover {
+      transform: translateY(-8px) scale(1.1);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .selector-item:hover::before {
+      transform: translateY(0);
+    }
+
+    .selector-item.active {
+      transform: translateY(-5px) scale(1.15);
+      border: 2px solid #fff;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    }
+
+    .selector-cola {
+      background: linear-gradient(135deg, var(--cola-primary), var(--cola-secondary));
+    }
+
+    .selector-fruity {
+      background: linear-gradient(135deg, var(--fruity-primary), var(--fruity-secondary));
+    }
+
+    .selector-miranda {
+      background: linear-gradient(135deg, var(--miranda-primary), var(--miranda-secondary));
+    }
+
+    .selector-label {
+      position: absolute;
+      bottom: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+      white-space: nowrap;
+    }
+
+    /* Splash Effect */
+    .splash-effect {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .splash-effect.active {
+      animation: splash-fade 2s ease-out forwards;
+    }
+
+    @keyframes splash-fade {
+      0% { opacity: 0; }
+      20% { opacity: 0.8; }
+      100% { opacity: 0; }
+    }
+
+    .splash {
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      opacity: 0;
+    }
+
+    .splash.animate {
+      animation: splash 1.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    }
+
+    @keyframes splash {
+      0% { transform: scale(0); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 0; }
+    }
+
+    /* Particle Effects */
+    .particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      background-color: rgba(var(--rgb-primary), 0.7);
+      border-radius: 50%;
+      opacity: 0;
+    }
+
+    /* Loading Screen */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      transition: opacity 1s ease;
+    }
+
+    .loading-logo {
+      font-size: 3.5rem;
+      font-weight: 900;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .loading-logo span {
+      display: inline-block;
+      animation: logo-color 3s ease-in-out infinite;
+      animation-delay: calc(var(--i) * 0.1s);
+    }
+
+    @keyframes logo-color {
+      0%, 100% { color: #fff; }
+      33% { color: var(--cola-primary); }
+      66% { color: var(--fruity-primary); }
+      100% { color: var(--miranda-primary); }
+    }
+
+    .loading-bar-container {
+      width: 300px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .loading-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--cola-primary), var(--fruity-primary), var(--miranda-primary));
+      background-size: 200% 100%;
+      animation: gradient-shift 2s linear infinite;
+    }
+
+    @keyframes gradient-shift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    /* Animations */
+    @keyframes fade-in {
+      0% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slide-in {
+      0% { opacity: 0; transform: translateX(var(--start-x)); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 1200px) {
+      .product-title {
+        right: 5%;
+      }
+      
+      .product-description {
+        left: 5%;
+        max-width: 350px;
+      }
+      
+      .product-name {
+        font-size: 4rem;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .product-title, .product-description {
+        text-align: center;
+        right: 50%;
+        left: auto;
+        transform: translateX(50%);
+        --start-x: 0;
+      }
+      
+      .product-title {
+        top: 15%;
+      }
+      
+      .product-description {
+        bottom: 30%;
+      }
+      
+      .product-name {
+        font-size: 3.5rem;
+      }
+      
+      .product-features {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .product-container {
+        width: 200px;
+        height: 400px;
+      }
+      
+      .product-name {
+        font-size: 3rem;
+      }
+      
+      .product-tagline {
+        font-size: 1.2rem;
+      }
+      
+      .description-text {
+        font-size: 1rem;
+      }
+      
+      .platform {
+        width: 300px;
+      }
+      
+      .selector-item {
+        width: 60px;
+        height: 60px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .matrix-logo {
+        font-size: 2.5rem;
+      }
+      
+      .product-name {
+        font-size: 2.5rem;
+      }
+      
+      .product-description {
+        max-width: 90%;
+      }
+      
+      .loading-logo {
+        font-size: 2.5rem;
+      }
+      
+      .loading-bar-container {
+        width: 80%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div class="loading-screen" id="loading-screen">
+    <div class="loading-logo">
+      <span style="--i:1">M</span>
+      <span style="--i:2">A</span>
+      <span style="--i:3">T</span>
+      <span style="--i:4">R</span>
+      <span style="--i:5">I</span>
+      <span style="--i:6">X</span>
+    </div>
+    <div class="loading-bar-container">
+      <div class="loading-bar" id="loading-bar"></div>
+    </div>
+  </div>
+
+  <!-- Main Experience Container -->
+  <div class="matrix-experience">
+    <!-- Background Elements -->
+    <div class="matrix-bg">
+      <div class="matrix-grid"></div>
+      <div class="liquid-bg" id="liquid-bg"></div>
+    </div>
+
+    <!-- Bubbles -->
+    <div class="bubbles-container" id="bubbles-container"></div>
+
+    <!-- Light Effects -->
+    <div class="light-effects">
+      <div class="spotlight" id="spotlight"></div>
+      <div id="light-beams"></div>
+    </div>
+
+    <!-- Product Display -->
+    <div class="product-showcase">
+      <div class="platform"></div>
+      <div class="product-container">
+        <div class="product-rotation" id="product-rotation">
+          <div class="product" data-product="cola" id="cola-product">
+            <div class="product-image-container">
+              <img src="Matrix-Cola-Carbonated-Drink-1024x819-removebg-preview.png" alt="ماتريكس كولا" id="cola-image">
+            </div>
+          </div>
+          <div class="product" data-product="fruity" id="fruity-product">
+            <div class="product-image-container">
+              <img src="Matrix-Fruit-Carbonated-Drink-removebg-preview.png" alt="ماتريكس فروتي" id="fruity-image">
+            </div>
+          </div>
+          <div class="product active" data-product="miranda" id="miranda-product">
+            <div class="product-image-container">
+              <img src="Matrix-Orange-Carbonated-Drink-removebg-preview.png" alt="ماتريكس ميراندا" id="miranda-image">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Splash Effect -->
+    <div class="splash-effect" id="splash-effect"></div>
+
+    <!-- Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Brand Elements -->
+    <div class="brand-elements">
+      <div class="matrix-logo">ماتريكس <span>الأردن</span></div>
+
+      <div class="product-title">
+        <div class="product-name" id="product-name">ميراندا</div>
+        <div class="product-tagline" id="product-tagline">أطلق النكهة</div>
+      </div>
+
+      <div class="product-description">
+        <div class="description-text" id="product-description">
+          استمتع بالطعم المنعش من ماتريكس ميراندا. مزيج مثالي من نكهة البرتقال الطبيعية والفوران المنعش الذي يمنحك إحساسًا بالانتعاش في كل رشفة.
+        </div>
+        <div class="product-features">
+          <div class="feature-item">
+            <div class="feature-icon">✓</div>
+            <div>نكهة طبيعية</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">✓</div>
+            <div>انتعاش فوري</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">✓</div>
+            <div>فوران مثالي</div>
+          </div>
+        </div>
+        <button class="cta-button" id="cta-button">اكتشف المزيد</button>
+      </div>
+
+      <div class="product-selector">
+        <div class="selector-item selector-cola" data-product="cola">
+          <div class="selector-label">كولا</div>
+        </div>
+        <div class="selector-item selector-fruity" data-product="fruity">
+          <div class="selector-label">فروتي</div>
+        </div>
+        <div class="selector-item selector-miranda active" data-product="miranda">
+          <div class="selector-label">ميراندا</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Variables
+      let currentProduct = 'miranda';
+      let isTransitioning = false;
+      
+      // Product configurations
+      const productConfigs = {
+        cola: {
+          primary: '#0062be',
+          secondary: '#004a8f',
+          rgb: '0,98,190',
+          name: 'كولا',
+          tagline: 'انتعاش أزرق',
+          description: 'استمتع بالطعم المنعش من ماتريكس كولا. مشروب غازي كلاسيكي بنكهة غنية ومميزة تمنحك لحظات من المتعة والانتعاش في كل رشفة.'
+        },
+        fruity: {
+          primary: '#e4007c',
+          secondary: '#9e005d',
+          rgb: '228,0,124',
+          name: 'فروتي',
+          tagline: 'انفجار التوت',
+          description: 'اكتشف مزيج نكهات التوت المبهج في ماتريكس فروتي. مشروب غازي منعش بنكهة الفواكه المتنوعة التي تملأ يومك بالحيوية والنشاط.'
+        },
+        miranda: {
+          primary: '#ff6600',
+          secondary: '#cc3300',
+          rgb: '255,102,0',
+          name: 'ميراندا',
+          tagline: 'أطلق النكهة',
+          description: 'استمتع بالطعم المنعش من ماتريكس ميراندا. مزيج مثالي من نكهة البرتقال الطبيعية والفوران المنعش الذي يمنحك إحساسًا بالانتعاش في كل رشفة.'
+        }
+      };
+      
+      // DOM Elements
+      const loadingScreen = document.getElementById('loading-screen');
+      const loadingBar = document.getElementById('loading-bar');
+      const liquidBg = document.getElementById('liquid-bg');
+      const bubblesContainer = document.getElementById('bubbles-container');
+      const spotlight = document.getElementById('spotlight');
+      const lightBeams = document.getElementById('light-beams');
+      const productRotation = document.getElementById('product-rotation');
+      const splashEffect = document.getElementById('splash-effect');
+      const particles = document.getElementById('particles');
+      const productName = document.getElementById('product-name');
+      const productTagline = document.getElementById('product-tagline');
+      const productDescription = document.getElementById('product-description');
+      const ctaButton = document.getElementById('cta-button');
+      const selectorItems = document.querySelectorAll('.selector-item');
+      
+      // Initialize the experience
+      function init() {
+        // Set initial product colors
+        updateColors('miranda');
+        
+        // Create light beams
+        createLightBeams();
+        
+        // Create initial bubbles
+        createInitialBubbles();
+        
+        // Simulate loading progress
+        simulateLoading();
+        
+        // Add event listeners
+        addEventListeners();
+      }
+      
+      // Simulate loading progress
+      function simulateLoading() {
+        let progress = 0;
+        const loadingInterval = setInterval(() => {
+          progress += Math.random() * 5;
+          if (progress >= 100) {
+            progress = 100;
+            clearInterval(loadingInterval);
+            
+            setTimeout(() => {
+              loadingScreen.style.opacity = 0;
+              setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                showUI();
+              }, 1000);
+            }, 500);
+          }
+          loadingBar.style.width = progress + '%';
+        }, 100);
+      }
+      
+      // Add event listeners
+      function addEventListeners() {
+        // Product selector
+        selectorItems.forEach(item => {
+          item.addEventListener('click', function() {
+            const product = this.dataset.product;
+            if (product !== currentProduct && !isTransitioning) {
+              changeProduct(product);
+            }
+          });
+        });
+        
+        // Spotlight follow mouse
+        document.addEventListener('mousemove', moveSpotlight);
+        
+        // Create bubbles continuously
+        setInterval(createBubble, 300);
+      }
+      
+      // Show UI elements
+      function showUI() {
+        // Show spotlight
+        spotlight.classList.add('active');
+        
+        // Show light beams
+        const beams = document.querySelectorAll('.light-beam');
+        beams.forEach(beam => {
+          beam.classList.add('active');
+        });
+        
+        // Show product
+        const activeProduct = document.querySelector(`.product[data-product="${currentProduct}"]`);
+        if (activeProduct) {
+          activeProduct.classList.add('active');
+        }
+      }
+      
+      // Create light beams
+      function createLightBeams() {
+        const beamCount = 8;
+        
+        for (let i = 0; i < beamCount; i++) {
+          const beam = document.createElement('div');
+          beam.classList.add('light-beam');
+          
+          const angle = (i / beamCount) * 360;
+          beam.style.transform = `rotate(${angle}deg)`;
+          
+          lightBeams.appendChild(beam);
+        }
+      }
+      
+      // Create initial bubbles
+      function createInitialBubbles() {
+        for (let i = 0; i < 50; i++) {
+          setTimeout(createBubble, i * 100);
+        }
+      }
+      
+      // Create a single bubble
+      function createBubble() {
+        const bubble = document.createElement('div');
+        bubble.classList.add('bubble');
+        
+        // Random size
+        const size = Math.random() * 40 + 10;
+        
+        // Random position
+        const posX = Math.random() * 100;
+        
+        // Random animation duration
+        const duration = Math.random() * 8 + 4;
+        
+        // Random horizontal movement
+        const translateX = (Math.random() * 200 - 100) + 'px';
+        
+        // Random scale
+        const scale = Math.random() * 1.5 + 0.5;
+        
+        // Random opacity
+        const opacity = Math.random() * 0.6 + 0.2;
+        
+        // Set styles
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        bubble.style.left = `${posX}%`;
+        bubble.style.setProperty('--duration', `${duration}s`);
+        bubble.style.setProperty('--translate-x', translateX);
+        bubble.style.setProperty('--scale', scale);
+        bubble.style.setProperty('--opacity', opacity);
+        
+        // Add to container
+        bubblesContainer.appendChild(bubble);
+        
+        // Remove bubble after animation
+        setTimeout(() => {
+          bubble.remove();
+        }, duration * 1000);
+      }
+      
+      // Move spotlight with mouse
+      function moveSpotlight(e) {
+        if (!spotlight) return;
+        
+        const x = e.clientX / window.innerWidth * 100 + '%';
+        const y = e.clientY / window.innerHeight * 100 + '%';
+        
+        spotlight.style.setProperty('--x', x);
+        spotlight.style.setProperty('--y', y);
+      }
+      
+      // Create splash effect
+      function createSplashEffect() {
+        splashEffect.innerHTML = '';
+        splashEffect.classList.remove('active');
+        
+        // Create multiple splashes
+        for (let i = 0; i < 3; i++) {
+          const splash = document.createElement('div');
+          splash.classList.add('splash');
+          
+          // Random size
+          const size = Math.random() * 400 + 300;
+          
+          // Random position
+          const posX = 50 + (Math.random() * 20 - 10);
+          const posY = 50 + (Math.random() * 20 - 10);
+          
+          // Set styles
+          splash.style.width = `${size}px`;
+          splash.style.height = `${size}px`;
+          splash.style.left = `calc(${posX}% - ${size/2}px)`;
+          splash.style.top = `calc(${posY}% - ${size/2}px)`;
+          splash.style.background = `radial-gradient(circle at center, rgba(${productConfigs[currentProduct].rgb}, 0.8) 0%, rgba(${productConfigs[currentProduct].rgb}, 0) 70%)`;
+          
+          splashEffect.appendChild(splash);
+        }
+        
+        // Trigger animation
+        setTimeout(() => {
+          splashEffect.classList.add('active');
+          const splashes = splashEffect.querySelectorAll('.splash');
+          splashes.forEach((splash, index) => {
+            setTimeout(() => {
+              splash.classList.add('animate');
+            }, index * 200);
+          });
+        }, 100);
+      }
+      
+      // Create particle explosion
+      function createParticleExplosion() {
+        particles.innerHTML = '';
+        
+        const particleCount = 100;
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        
+        for (let i = 0; i < particleCount; i++) {
+          const particle = document.createElement('div');
+          particle.classList.add('particle');
+          
+          // Random size
+          const size = Math.random() * 8 + 2;
+          
+          // Random angle and distance
+          const angle = Math.random() * Math.PI * 2;
+          const distance = Math.random() * 200 + 50;
+          const delay = Math.random() * 0.5;
+          const duration = Math.random() * 1 + 1;
+          
+          // Calculate position
+          const x = centerX + Math.cos(angle) * 10;
+          const y = centerY + Math.sin(angle) * 10;
+          
+          // End position
+          const endX = centerX + Math.cos(angle) * distance;
+          const endY = centerY + Math.sin(angle) * distance;
+          
+          // Set styles
+          particle.style.width = `${size}px`;
+          particle.style.height = `${size}px`;
+          particle.style.left = `${x}px`;
+          particle.style.top = `${y}px`;
+          
+          // Add to container
+          particles.appendChild(particle);
+          
+          // Animate
+          setTimeout(() => {
+            particle.style.transition = `all ${duration}s cubic-bezier(0.1, 0.8, 0.3, 1)`;
+            particle.style.opacity = '1';
+            
+            setTimeout(() => {
+              particle.style.left = `${endX}px`;
+              particle.style.top = `${endY}px`;
+              particle.style.opacity = '0';
+              
+              setTimeout(() => {
+                particle.remove();
+              }, duration * 1000);
+            }, 10);
+          }, delay * 1000);
+        }
+      }
+      
+      // Update colors based on product
+      function updateColors(product) {
+        document.documentElement.style.setProperty('--current-primary', productConfigs[product].primary);
+        document.documentElement.style.setProperty('--current-secondary', productConfigs[product].secondary);
+        document.documentElement.style.setProperty('--rgb-primary', productConfigs[product].rgb);
+        
+        // Update matrix grid
+        document.querySelector('.matrix-grid').style.backgroundImage = `
+          linear-gradient(rgba(${productConfigs[product].rgb}, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(${productConfigs[product].rgb}, 0.03) 1px, transparent 1px)
+        `;
+      }
+      
+      // Change product
+      function changeProduct(product) {
+        if (isTransitioning) return;
+        isTransitioning = true;
+        
+        // Create effects
+        createSplashEffect();
+        createParticleExplosion();
+        
+        // Hide current product
+        const currentProductEl = document.querySelector(`.product[data-product="${currentProduct}"]`);
+        if (currentProductEl) {
+          currentProductEl.classList.remove('active');
+        }
+        
+        // Update current product
+        currentProduct = product;
+        
+        // Update colors
+        updateColors(product);
+        
+        // Update UI text
+        productName.textContent = productConfigs[product].name;
+        productTagline.textContent = productConfigs[product].tagline;
+        productDescription.textContent = productConfigs[product].description;
+        
+        // Update active selector
+        selectorItems.forEach(item => {
+          item.classList.remove('active');
+          if (item.dataset.product === product) {
+            item.classList.add('active');
+          }
+        });
+        
+        // Show new product after a delay
+        setTimeout(() => {
+          const newProductEl = document.querySelector(`.product[data-product="${product}"]`);
+          if (newProductEl) {
+            newProductEl.classList.add('active');
+          }
+          
+          isTransitioning = false;
+        }, 500);
+      }
+      
+      // Initialize the experience
+      init();
+    });
+  </script>
+</body>
+</html>
